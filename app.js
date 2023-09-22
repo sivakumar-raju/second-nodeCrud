@@ -78,8 +78,24 @@ app.use(cors());
 //   res.send('1 record removed successfully');
 // })
 
+app.get('/users', (req, res) => {
+  // Write your SQL query
+  const sqlQuery = 'SELECT * FROM logins';
 
-app.post('/delete',(req,res)=>{
+  // Execute the SQL query
+  db.query(sqlQuery, (error, result) => {
+    if (error) {
+      console.error('Error executing query:', error);
+      res.status(500).json({ error: 'An error occurred while fetching data' });
+    } else {
+      // Send the query result as JSON response
+      res.json(result.rows);
+    }
+  });
+});
+
+
+app.post('/add',(req,res)=>{
 // SQL query to create a table
 const createTableQuery = `
   CREATE TABLE IF NOT EXISTS logins (
@@ -94,12 +110,15 @@ const createTableQuery = `
 db.query(createTableQuery, (error, results) => {
   if (error) {
     console.error('Error creating table:', error);
+    res.send(error);
   } else {
     console.log('Table created successfully');
+    res.send(results);
   }
 
   // Close the database connection
   db.end();
+
 });
 
 })
